@@ -1,0 +1,6 @@
+src/
+rollup.config.js
+dist/types/*.js
+node_modules
+*.lock
+*.log

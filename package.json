@@ -1,0 +1,31 @@
+{
+  "name": "react-list",
+  "version": "1.0.0",
+  "description": "a high perfomance list based react tech stack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "react": "^16.x"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "@types/react": "^16.9.19",
+    "@types/urijs": "^1.19.5",
+    "@types/url-parse": "^1.4.3",
+    "babel-preset-latest": "^6.24.1",
+    "rollup": "^1.31.0",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-terser": "^5.2.0",
+    "rollup-plugin-typescript": "^1.0.1",
+    "tslib": "^1.10.0",
+    "typescript": "^3.7.5"
+  },
+  "author": "",
+  "license": "MIT"
+}
