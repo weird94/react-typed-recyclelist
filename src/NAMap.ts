@@ -52,12 +52,10 @@ export default class NAMap {
       const index = current.indexOf(i);
       if (index > -1) {
         current.splice(index, 1);
-        return true;
       }
     }
 
     this.domMap.delete(i);
-    return false;
   }
 
   getFirst(key: React.ComponentType) {

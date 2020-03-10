@@ -7,16 +7,18 @@ type HeaderFooterProps = {
   style: React.CSSProperties;
 };
 
+export type CellProps<T> = {
+  height: number;
+  width: number;
+  top: number;
+  data: T;
+  index: number;
+};
+
 export type CellData<T> = {
   height: number;
   data: T;
-  Component: React.ComponentType<{
-    height: number;
-    width: number;
-    top: number;
-    data: T;
-    index: number;
-  }>;
+  Component: React.ComponentType<CellProps<T>>;
 };
 
 export type RecyclerListProps<T> = {
@@ -57,7 +59,9 @@ type State<T> = {
 };
 
 const scrollStyle: React.CSSProperties = {
-  WebkitOverflowScrolling: 'touch'
+  WebkitOverflowScrolling: 'touch',
+  overflowX: 'hidden',
+  overflowY: 'scroll'
 };
 
 const headerStyle: React.CSSProperties = {
@@ -116,7 +120,11 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
     contentHeight: 0
   };
 
-  lastScrollTop: number = 0;
+  componentDidMount() {
+    this.handleScroll({} as any);
+  }
+
+  lastScrollTop: number = NaN;
 
   container = React.createRef<HTMLDivElement>();
 
@@ -186,7 +194,8 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
     // 需要render真实item的区域
     const bottomOffset = ((renderAccuary - 1) / 2 + 1) * height;
     const topOffset = (height * (renderAccuary - 1)) / 2;
-    const start = Math.max(0, scrollTop - topOffset) - headerHeight;
+
+    const start = Math.max(0, scrollTop - topOffset - headerHeight);
     const end = scrollTop + bottomOffset - headerHeight;
 
     let shouldSetState = false;
@@ -198,33 +207,37 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
         const last = current[current.length - 1];
         if (last.i === len - 1) break;
         const lastLayout = layouts[last.i];
-        const shouldAddNewItem = lastLayout.top + lastLayout.height >= end;
+        const shouldAddNewItem = lastLayout.top + lastLayout.height <= end;
+        const ii = last.i + 1;
+        const nextItem = layouts[ii];
+
         if (shouldAddNewItem) {
           shouldSetState = true;
-          const ii = last.i + 1;
-          const nextItem = layouts[ii];
           const oldItem = renderCurrentMap.getFirst(nextItem.type);
-          if (isUndef(typeof oldItem)) {
+          if (!isUndef(typeof oldItem)) {
             const oldItemLayout = layouts[oldItem];
             const shouldReuseOldItem =
               oldItemLayout.top + oldItemLayout.height < start;
+
             if (shouldReuseOldItem) {
               const dom = renderCurrentMap.getDom(oldItem);
               // 移除旧的item
               renderCurrentMap.remove(oldItemLayout.type, oldItem);
               const oldIndex = current.findIndex(item => item.i === oldItem);
               current.splice(oldIndex, 1);
-
-              // 复用旧的 item 并且插入新的item
+              // // 复用旧的 item 并且插入新的item
               current.push({ i: ii, dom });
-            } else {
-              // 没有旧的模块可以复用，直接插入新的模块
-              current.push({ i: ii, dom: current.length });
+              renderCurrentMap.push({ i: ii, dom, type: oldItemLayout.type });
+              continue;
             }
-          } else {
-            // 没有旧的模块可以复用，直接插入新的模块
-            current.push({ i: ii, dom: current.length });
           }
+          // 没有旧的模块可以复用，直接插入新的模块
+          current.push({ i: ii, dom: current.length });
+          renderCurrentMap.push({
+            i: ii,
+            dom: current.length,
+            type: nextItem.type
+          });
         } else {
           // 不需要向末尾增加模块了, 跳出循环
           break;
@@ -241,7 +254,7 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
           const ii = first.i - 1;
           const nextItem = layouts[ii];
           const oldItem = renderCurrentMap.getLast(nextItem.type);
-          if (isUndef(typeof oldItem)) {
+          if (!isUndef(typeof oldItem)) {
             const oldItemLayout = layouts[oldItem];
             const shouldReuseOldItem = oldItemLayout.top > end;
             if (shouldReuseOldItem) {
@@ -252,14 +265,18 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
               current.splice(oldIndex, 1);
               // 复用旧的 item 并且插入新的item
               current.unshift({ i: ii, dom });
-            } else {
-              // 没有旧的模块可以复用，直接插入新的模块
-              current.unshift({ i: ii, dom: current.length });
+              renderCurrentMap.push({ i: ii, dom, type: oldItemLayout.type });
+              continue;
             }
-          } else {
-            // 没有旧的模块可以复用，直接插入新的模块
-            current.unshift({ i: ii, dom: current.length });
           }
+
+          // 没有旧的模块可以复用，直接插入新的模块
+          current.push({ i: ii, dom: current.length });
+          renderCurrentMap.push({
+            i: ii,
+            dom: current.length,
+            type: nextItem.type
+          });
         } else {
           // 不需要向末尾增加模块了, 跳出循环
           break;
@@ -277,13 +294,21 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
     };
   }
 
+  handleScrollPure = (scrollTop: number) => {
+    const info = this.getRenderList(scrollTop);
+    if (info === null) return null;
+    const { shouldSetState, ...oterState } = info;
+    if (shouldSetState) return oterState;
+    else return null;
+  };
+
   handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const container = this.container.current;
     if (container) {
       const { scrollTop } = container;
-      const { shouldSetState, ...oterState } = this.getRenderList(scrollTop);
-      if (shouldSetState) {
-        this.setState(oterState);
+      const newState = this.handleScrollPure(scrollTop);
+      if (newState) {
+        this.setState(newState);
       }
     }
   };
@@ -306,7 +331,11 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
         ref={this.container}
       >
         <div
-          style={{ width, height: headerHeight + footerHeight + contentHeight }}
+          style={{
+            width,
+            height: headerHeight + footerHeight + contentHeight,
+            position: 'relative'
+          }}
         >
           {Header ? (
             <Header
