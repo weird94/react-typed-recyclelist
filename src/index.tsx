@@ -1,6 +1,5 @@
 import React from 'react';
 import NAMap from './NAMap';
-import { isUndef, getLogObject } from './util';
 
 type HeaderFooterProps = {
   onHeightChange: (height: number) => void;
@@ -114,19 +113,15 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
     contentHeight: 0
   };
 
-  componentDidMount() {
-    this.handleScroll(10000);
-  }
-
   lastScrollTop: number = NaN;
 
   container = React.createRef<HTMLDivElement>();
 
-  handleHeaderHeightChange = (height: number) => {
+  private handleHeaderHeightChange = (height: number) => {
     this.setState({ headerHeight: height });
   };
 
-  handleFooterHeightChange = (height: number) => {
+  private handleFooterHeightChange = (height: number) => {
     this.setState({ footerHeight: height });
   };
 
@@ -335,7 +330,7 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
     };
   }
 
-  handleScrollPure = (scrollTop: number) => {
+  private handleScrollPure = (scrollTop: number) => {
     const info = this.getRenderList(scrollTop);
     if (info === null) return null;
     const { shouldSetState, ...oterState } = info;
@@ -343,7 +338,7 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
     else return null;
   };
 
-  handleScroll = (event: React.UIEvent<HTMLDivElement> | number) => {
+  private handleScroll = (event?: React.UIEvent<HTMLDivElement> | number) => {
     const container = this.container.current;
     if (container) {
       let scrollTop;
@@ -360,6 +355,14 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
       }
     }
   };
+
+  scrollTo(offset: number) {
+    this.handleScroll(offset);
+  }
+
+  componentDidMount() {
+    this.handleScroll();
+  }
 
   render() {
     const { height, width, style, className, Header, Footer } = this.props;

@@ -39,7 +39,12 @@ export default class SortedArray<T> {
         mid = ~~((index1 + index2) / 2);
       }
 
-      this.array.splice(index1, 0, ele);
+      if (getter(array[index1]) === eleValue || getter(array[index2]) === eleValue) {
+        throw '[SortedArray]: try to insert a exist element to an sorted array';
+      } else {
+        // 插入
+        this.array.splice(index2, 0, ele);
+      }
     }
   }
 

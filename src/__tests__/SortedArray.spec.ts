@@ -32,4 +32,40 @@ test('SortedArray.push', () => {
   sorted.push(0);
 
   expect(sorted.getList().length).toBe(1);
+
+  sorted.push(3);
+
+  expect(sorted.getList().length).toBe(2);
+  expect(sorted.getList()).toEqual([0, 3]);
+
+  try {
+    sorted.push(0);
+    expect('this should not be called').toBe(2);
+  } catch (error) {
+    console.log('error', error);
+    expect(typeof error).toBe('string');
+  }
+
+  expect(sorted.getList().length).toBe(2);
+  console.log('sorted', sorted.getList());
+
+  sorted.push(1);
+  console.log('sorted', sorted.getList());
+
+  expect(sorted.getList().length).toBe(3);
+
+  expect(sorted.getList()).toEqual([0, 1, 3]);
+});
+
+test('SortedArray.remove', () => {
+  const sorted = new SortedArray([1, 2, 4, 3, 5], i => i);
+  const res = sorted.remove(1);
+
+  expect(res).toBe(1);
+  expect(sorted.getList()).toEqual([2, 3, 4, 5]);
+
+  const res2 = sorted.remove(6);
+  expect(res2).toBe(undefined);
+
+  expect(sorted.getList()).toEqual([2, 3, 4, 5]);
 });
