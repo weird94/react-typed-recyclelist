@@ -1,4 +1,5 @@
 import { RenderInfo } from '.';
+import SortedArray from './SortedArray';
 
 type Info = RenderInfo & { type: React.ComponentType };
 
@@ -8,12 +9,14 @@ type Info = RenderInfo & { type: React.ComponentType };
  *     value 为有序的 number 数组
  */
 export default class NAMap {
-  private instance: Map<React.ComponentType, number[]>;
+  private instance: Map<React.ComponentType, SortedArray<number>>;
   private domMap: Map<number, number>;
+  private totalList: SortedArray<Info>;
 
   constructor() {
     this.instance = new Map();
     this.domMap = new Map();
+    this.totalList = new SortedArray<Info>([], item => item.i);
   }
 
   /**
@@ -24,16 +27,13 @@ export default class NAMap {
   private setSingle(key: React.ComponentType, value: number, dom: number) {
     const current = this.instance.get(key);
     if (current) {
-      if (current[0] && current[0] > value) {
-        current.unshift(value);
-      } else {
-        current.push(value);
-      }
+      current.push(value);
     } else {
-      this.instance.set(key, [value]);
+      this.instance.set(key, new SortedArray([value], i => i));
     }
 
     this.domMap.set(value, dom);
+    this.totalList.push({ i: value, dom, type: key });
   }
 
   push(items: (Info & { dom: number }) | (Info & { dom: number })[]) {
@@ -49,24 +49,23 @@ export default class NAMap {
   remove(type: React.ComponentType, i: number) {
     const current = this.instance.get(type);
     if (current) {
-      const index = current.indexOf(i);
-      if (index > -1) {
-        current.splice(index, 1);
-      }
+      current.remove(i);
     }
 
     this.domMap.delete(i);
+
+    return this.totalList.remove(i);
   }
 
   getFirst(key: React.ComponentType) {
     const current = this.instance.get(key);
-    return current ? current[0] : undefined;
+    return current ? current.getFirst() : undefined;
   }
 
   getLast(key: React.ComponentType) {
     const current = this.instance.get(key);
-    if (current && current.length > 0) {
-      return current[current.length - 1];
+    if (current) {
+      return current.getLast();
     } else {
       return undefined;
     }
@@ -74,5 +73,9 @@ export default class NAMap {
 
   getDom(key: number) {
     return this.domMap.get(key);
+  }
+
+  getList() {
+    return this.totalList.getList();
   }
 }
