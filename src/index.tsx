@@ -1,7 +1,8 @@
 import React from 'react';
 import NAMap from './NAMap';
+import { getLogObject } from './util';
 
-type HeaderFooterProps = {
+export type HeaderFooterProps = {
   onHeightChange: (height: number) => void;
   style: React.CSSProperties;
 };
@@ -30,6 +31,9 @@ export type RecyclerListProps<T> = {
   className?: string;
   onCellClick?: (cellData: CellData<T>, index: number) => void;
   renderAccuary?: number;
+  scrollEventThrottle?: number;
+  onScroll?: (scrollTop: number, event: React.UIEvent<HTMLDivElement>) => void;
+  defaultScrollTop: number;
 };
 
 type Layout = {
@@ -165,13 +169,14 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
   }
 
   private getRenderList(scrollTop: number) {
-    const { headerHeight, layouts } = this.state;
-    const { current } = this;
-    const { height, renderAccuary = 3 } = this.props;
     const lastScrollTop = this.lastScrollTop;
+    const { scrollEventThrottle = 100 } = this.props;
+    if (scrollTop - lastScrollTop < scrollEventThrottle) return null;
     this.lastScrollTop = scrollTop;
 
-    if (lastScrollTop === scrollTop) return null;
+    const { headerHeight, layouts } = this.state;
+    const { current } = this;
+    const { height, renderAccuary = 5 } = this.props;
 
     const isScrollDown = lastScrollTop <= scrollTop;
     const len = layouts.length;
@@ -220,18 +225,15 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
 
         if (shouldAddNewItem) {
           shouldSetState = true;
-          let oldItem: number | undefined;
           let shouldReuseOldItem = false;
           let oldRenderInfo: RenderInfo | undefined = undefined;
           const bottomOldItem = this.bottomRemoveMap.getFirst(nextItem.type);
           if (bottomOldItem !== undefined) {
-            oldItem = bottomOldItem;
             shouldReuseOldItem = true;
             oldRenderInfo = this.bottomRemoveMap.remove(nextItem.type, bottomOldItem);
           } else {
             const topOldItem = this.topRemoveMap.getFirst(nextItem.type);
             if (topOldItem !== undefined) {
-              oldItem = topOldItem;
               const oldItemLayout = layouts[topOldItem];
               shouldReuseOldItem = oldItemLayout.top + oldItemLayout.height < start;
               if (shouldReuseOldItem) {
@@ -245,7 +247,13 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
             continue;
           }
           // 没有旧的模块可以复用，直接插入新的模块
-          current.push({ i: ii, dom: current.length });
+          current.push({
+            i: ii,
+            dom:
+              current.length +
+              this.topRemoveMap.getList().length +
+              this.bottomRemoveMap.getList().length
+          });
         } else {
           // 不需要向末尾增加模块了, 跳出循环
           break;
@@ -309,7 +317,13 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
           }
 
           // 没有旧的模块可以复用，直接插入新的模块
-          current.unshift({ i: ii, dom: current.length });
+          current.unshift({
+            i: ii,
+            dom:
+              current.length +
+              this.topRemoveMap.getList().length +
+              this.bottomRemoveMap.getList().length
+          });
         } else {
           break;
         }
@@ -332,36 +346,27 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
 
   private handleScrollPure = (scrollTop: number) => {
     const info = this.getRenderList(scrollTop);
-    if (info === null) return null;
+    if (info === null) return;
     const { shouldSetState, ...oterState } = info;
-    if (shouldSetState) return oterState;
-    else return null;
+    if (shouldSetState) {
+      this.setState(oterState);
+    }
   };
 
-  private handleScroll = (event?: React.UIEvent<HTMLDivElement> | number) => {
+  private handleScroll = (event?: React.UIEvent<HTMLDivElement>) => {
     const container = this.container.current;
     if (container) {
-      let scrollTop;
-      if (typeof event === 'number') {
-        container.scrollTop = event;
-        scrollTop = event;
-      } else {
-        scrollTop = container.scrollTop;
-      }
-
-      const newState = this.handleScrollPure(scrollTop);
-      if (newState) {
-        this.setState(newState);
-      }
+      const scrollTop = container.scrollTop;
+      this.handleScrollPure(scrollTop);
     }
   };
 
   scrollTo(offset: number) {
-    this.handleScroll(offset);
+    this.handleScrollPure(offset);
   }
 
   componentDidMount() {
-    this.handleScroll();
+    this.handleScrollPure(this.props.defaultScrollTop || 0);
   }
 
   render() {
@@ -389,7 +394,10 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
           }}
         >
           {Header ? (
-            <Header onHeightChange={this.handleHeaderHeightChange} style={headerStyle} />
+            <Header
+              onHeightChange={this.handleHeaderHeightChange}
+              style={{ ...headerStyle, width }}
+            />
           ) : null}
           {renderCurrent.map((layoutIndex, index) => {
             const layout = layouts[layoutIndex];
