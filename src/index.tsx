@@ -30,7 +30,7 @@ export type RecyclerListProps<T> = {
   style?: React.CSSProperties;
   className?: string;
   renderAccuary?: number;
-  scrollEventThrottle?: number;
+  scrollComputeThrottle?: number;
   onScroll?: (scrollTop: number, event: React.UIEvent<HTMLDivElement>) => void;
   defaultScrollTop: number;
   onEndReached?: () => void;
@@ -395,12 +395,10 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
       this.triggerScrollEvent(scrollTop, event);
       runAtIdle(() => {
         this.computeShowEvent(scrollTop);
-        this.comuteHeaderShow(scrollTop);
-        this.comuteFooterShow(scrollTop);
       });
       const lastScrollTop = this.lastScrollTop;
-      const { scrollEventThrottle = 100 } = this.props;
-      if (Math.abs(scrollTop - lastScrollTop) < scrollEventThrottle) return;
+      const { scrollComputeThrottle = 100 } = this.props;
+      if (Math.abs(scrollTop - lastScrollTop) < scrollComputeThrottle) return;
       this.handleScrollPure(scrollTop);
       this.lastScrollTop = scrollTop;
     }
@@ -421,6 +419,12 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
   }
 
   private computeShowEvent(scrollTop: number) {
+    this.computeCellShowEvent(scrollTop);
+    this.comuteFooterShow(scrollTop);
+    this.comuteHeaderShow(scrollTop);
+  }
+
+  private computeCellShowEvent(scrollTop: number) {
     const { onCellShow, onCellHide } = this.props;
     if (onCellShow === undefined && onCellHide === undefined) {
       return;
@@ -432,6 +436,7 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
 
     const current = this.current;
     const layouts = this.state.layouts;
+
     for (let i = 0, len = this.current.length; i < len; i++) {
       const index = current[i].i;
       const layout = layouts[index];
@@ -443,6 +448,10 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
           break;
         }
       }
+    }
+
+    if (firstShowItem === this.cellFirstShowIndex && lastShowItem === this.cellLastShowIndex) {
+      return;
     }
 
     if (Number.isNaN(this.cellFirstShowIndex) || Number.isNaN(this.cellLastShowIndex)) {
