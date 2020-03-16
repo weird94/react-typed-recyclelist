@@ -4,12 +4,12 @@
     // "incremental": true,
     "target": "es5",
     "module": "commonjs",
+    "strict": true,
     // "lib": [],
     // "allowJs": true,
     // "checkJs": true,
     "jsx": "react",
     "declaration": true,
-
     "outDir": "./dist/types",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true

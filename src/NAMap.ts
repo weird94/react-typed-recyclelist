@@ -1,7 +1,7 @@
 import { RenderInfo } from '.';
 import SortedArray from './SortedArray';
 
-type Info = RenderInfo & { type: React.ComponentType };
+type Info = RenderInfo & { type: React.ComponentType<any> };
 
 /**
  * [NAMap]: NumberArrayMap
@@ -9,7 +9,7 @@ type Info = RenderInfo & { type: React.ComponentType };
  *     value 为有序的 number 数组
  */
 export default class NAMap {
-  private instance: Map<React.ComponentType, SortedArray<number>>;
+  private instance: Map<React.ComponentType<any>, SortedArray<number>>;
   private domMap: Map<number, number>;
   private totalList: SortedArray<Info>;
 
@@ -46,7 +46,7 @@ export default class NAMap {
     }
   }
 
-  remove(type: React.ComponentType, i: number) {
+  remove(type: React.ComponentType<any>, i: number) {
     const current = this.instance.get(type);
     if (current) {
       current.remove(i);
@@ -57,12 +57,12 @@ export default class NAMap {
     return this.totalList.remove(i);
   }
 
-  getFirst(key: React.ComponentType) {
+  getFirst(key: React.ComponentType<any>) {
     const current = this.instance.get(key);
     return current ? current.getFirst() : undefined;
   }
 
-  getLast(key: React.ComponentType) {
+  getLast(key: React.ComponentType<any>) {
     const current = this.instance.get(key);
     if (current) {
       return current.getLast();
