@@ -14,8 +14,8 @@ npm install react-recycle-list --save
 
 | 属性                  | 类型                                  | 默认 | 必填   | 描述                                                                                         |
 | --------------------- | ------------------------------------- | ---- | ------ | -------------------------------------------------------------------------------------------- |
-| Header                | `React.ComponentType<HeaderProps>`    | null |        | 列表 header 组件                                                                             |
-| Footer                | `React.ComponentType<FooterProps>`    | null |        | 列表 footer 组件                                                                             |
+| Header                | `ComponentType<HeaderProps>`          | null |        | 列表 header 组件                                                                             |
+| Footer                | `ComponentType<FooterProps>`          | null |        | 列表 footer 组件                                                                             |
 | cellData              | `CellData<T>[]`                       |      | `true` | 列表渲染的数据(参考 demo)                                                                    |
 | height                | `number`                              |      | `true` | 列表容器的高度                                                                               |
 | width                 | `number`                              |      | `true` | 列表容器的宽度                                                                               |
