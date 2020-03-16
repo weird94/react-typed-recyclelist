@@ -190,7 +190,7 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
 
     const newCurrent: RenderInfo[] = [];
     const newRenderCurrent: number[] = [];
-    if (startIndex) {
+    if (startIndex !== undefined) {
       for (let i = startIndex; i <= endIndex; i++) {
         newCurrent.push({ i, dom: i - startIndex });
         newRenderCurrent.push(i);
