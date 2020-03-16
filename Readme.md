@@ -21,7 +21,7 @@ npm install react-recycle-list --save
 | width                 | `number`                              |        | `true` | 列表容器的宽度                                                                               |
 | style                 | `React.CSSProperties`                 |        |        | 列表样式                                                                                     |
 | className             | `string`                              |        |        | 列表 class                                                                                   |
-| renderAccuary         | `number`                              | 5      |        | 列表真实渲染因子`真实渲染内容高度 = renderAccuary \* 列表容器高度`                           |
+| renderAccuary         | `number`                              | 5      |        | 列表真实渲染因子`真实渲染内容高度 = renderAccuary * 列表容器高度`                            |
 | scrollComputeThrottle | `number`                              | 100    |        | 列表触发渲染重新计算的滚动距离 (这个参数可以结合 renderAccuary 以及 item 的高度进行性能调优) |
 | defaultScrollTop      | `number`                              | 0      |        | 列表初始滚动的位置                                                                           |
 | onScroll              | `(scrollTop: number, event) => void;` |        |        | 滚动时触发的事件，返回当前滚动的距离 （频发触发，业务侧最好做好节流）                        |
