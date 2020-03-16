@@ -43,20 +43,17 @@ npm install react-recycle-list --save
 - [示例代码](./demo/index.tsx)
 - [live demo](https://only4ly.github.io/list/)
 
-### 常见问题
+### 注意 or 常见问题
 
-1. 为什么 Cell 的 props 要传一堆的 width,height,top 属性而不是 style 呢
+#### 当你实现列表的 CellComponent 时, 你必须正确的使用从 props 中传入的 style
 
-```tsx
+```typescript
 const Cell = memo((props: CellProps<{ name: string }>) => {
-  const { width, height, top, index } = props;
+  const { style, index } = props;
   return (
     <div
       style={{
-        width,
-        height,
-        top,
-        position: 'absolute',
+        ...style,
         backgroundColor: index % 2 === 0 ? 'white' : 'yellow',
         display: 'flex',
         alignItems: 'center',
@@ -69,4 +66,13 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 });
 ```
 
-因为这样的话你的 Cell 组件为 memo 组件或者 PureComponent 组件时会得到部分的性能提升
+并且, 我们会保证 props 中每个属性的前后一致性, 所以你可以放心的使用 `React.memo` 或者 `React.PureComponent`
+
+#### 我自己在真实的使用过程中出现了滑动过快导致短暂白屏的情况，我应该怎么优化呢 ？
+
+我们开放了一些参数用于你在实际使用中自己进行部分的调优
+
+- renderAccuary: 列表真实渲染因子`真实渲染内容高度 = renderAccuary * 列表容器高度` 默认为 5
+- scrollComputeThrottle: 列表触发重新计算真实渲染内容所需要滚动的距离，这个参数决定了列表在滚动过程中的计算量的大小。默认为 100
+
+所以，如果你出现了上述情况，不妨试试将这两个参数调大一些。
