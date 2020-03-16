@@ -1,30 +1,43 @@
 import React from 'react';
 import NAMap from './NAMap';
 import { delayCall, runAtIdle } from './util';
+import CellWrapper from './CellWraper';
 
 export type HeaderFooterProps = {
   onHeightChange: (height: number) => void;
   style: React.CSSProperties;
 };
 
-export type CellProps<T> = {
+export type CellWrapperProps = {
   height: number;
   width: number;
   top: number;
+  data: any;
+  index: number;
+};
+
+export type CellProps<T> = {
+  style: React.CSSProperties;
   data: T;
   index: number;
 };
 
-export type CellData<T> = {
+export type CellDatas<T> = {
   height: number;
   data: T;
   Component: React.ComponentType<CellProps<T>>;
+}[];
+
+type CellData = {
+  height: number;
+  data: any;
+  Component: React.ComponentType<CellWrapperProps>;
 };
 
-export type RecyclerListProps<T> = {
+export type RecyclerListProps = {
   Header?: React.ComponentType<HeaderFooterProps>;
   Footer?: React.ComponentType<HeaderFooterProps>;
-  cellData: CellData<T>[];
+  cellData: CellDatas<any>;
   height: number;
   width: number;
   style?: React.CSSProperties;
@@ -32,7 +45,7 @@ export type RecyclerListProps<T> = {
   renderAccuary?: number;
   scrollComputeThrottle?: number;
   onScroll?: (scrollTop: number, event: React.UIEvent<HTMLDivElement>) => void;
-  defaultScrollTop: number;
+  defaultScrollTop?: number;
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
   onCellShow?: (index: number) => void;
@@ -46,21 +59,15 @@ export type RecyclerListProps<T> = {
 type Layout = {
   height: number;
   top: number;
-  type: React.ComponentType<{
-    height: number;
-    width: number;
-    top: number;
-    data: any;
-    index: number;
-  }>;
+  type: React.ComponentType<CellProps<any>>;
 };
 
 export type RenderInfo = { i: number; dom: number };
 
-type State<T> = {
+type State = {
   headerHeight: number;
   footerHeight: number;
-  cellData: CellData<T>[];
+  cellData: CellDatas<any>;
   layouts: Layout[];
   renderCurrent: number[];
   contentHeight: number;
@@ -87,8 +94,8 @@ const footerStyle: React.CSSProperties = {
   left: 0
 };
 
-class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
-  static computedRenderCellLayouts<T>(props: RecyclerListProps<T>) {
+class RecyclerList extends React.Component<RecyclerListProps, State> {
+  static computedRenderCellLayouts(props: RecyclerListProps) {
     const layouts: Layout[] = [];
     let totalHeight = 0;
 
@@ -101,7 +108,7 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
     return { layouts, contentHeight: totalHeight };
   }
 
-  static getDerivedStateFromProps<T>(props: RecyclerListProps<T>, state: State<T>) {
+  static getDerivedStateFromProps(props: RecyclerListProps, state: State) {
     const { width } = props;
     const isCellDataEqual =
       props.cellData === state.cellData && props.cellData.length === state.cellData.length;
@@ -133,7 +140,7 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
   topRemoveMap: NAMap = new NAMap();
   bottomRemoveMap: NAMap = new NAMap();
 
-  state: State<T> = {
+  state: State = {
     // @ts-ignore
     headerHeight: this.props.Header?.initHeight || 0,
     // @ts-ignore
@@ -547,13 +554,14 @@ class RecyclerList<T> extends React.Component<RecyclerListProps<T>, State<T>> {
             const { type: TypeComponent, height, top } = layout;
 
             return (
-              <TypeComponent
+              <CellWrapper
                 height={height}
                 width={width}
                 top={top + headerHeight}
                 index={layoutIndex}
                 data={cellData[layoutIndex].data}
                 key={index}
+                Component={TypeComponent}
               />
             );
           })}

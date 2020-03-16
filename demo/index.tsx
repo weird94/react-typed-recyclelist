@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import List, { CellProps, CellData, HeaderFooterProps } from '../src/index';
+import List, { CellProps, CellDatas, HeaderFooterProps } from '../src/index';
 import ReactDOM from 'react-dom';
 
 const Header: React.FC<HeaderFooterProps> = memo(({ onHeightChange, style }) => {
@@ -21,14 +21,11 @@ const Header: React.FC<HeaderFooterProps> = memo(({ onHeightChange, style }) => 
 Header.initHeight = 100;
 
 const Cell = memo((props: CellProps<{ name: string }>) => {
-  const { width, height, top, index } = props;
+  const { style, index } = props;
   return (
     <div
       style={{
-        width,
-        height,
-        top,
-        position: 'absolute',
+        ...style,
         backgroundColor: index % 2 === 0 ? 'white' : 'yellow',
         display: 'flex',
         alignItems: 'center',
@@ -40,7 +37,7 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
   );
 });
 
-const cellData: CellData<{ name: string }>[] = Array(1000)
+const cellData: CellDatas<{ name: string }> = Array(1000)
   .fill(1)
   .map((_, i) => {
     return {
@@ -60,14 +57,12 @@ const Cell2 = memo((props: CellProps<{ title: string; subTitle: string }>) => {
   return (
     <section
       style={{
-        height: props.height,
-        width: props.width,
-        position: 'absolute',
-        top: props.top,
+        ...props.style,
         backgroundColor: 'red',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flexDirection: 'column'
       }}
     >
       <h4>{props.data.title + props.index}</h4>
@@ -76,7 +71,7 @@ const Cell2 = memo((props: CellProps<{ title: string; subTitle: string }>) => {
   );
 });
 
-const cellData2: CellData<{ title: string; subTitle: string }>[] = Array(1000)
+const cellData2: CellDatas<{ title: string; subTitle: string }> = Array(1000)
   .fill(1)
   .map((_, i) => {
     return {

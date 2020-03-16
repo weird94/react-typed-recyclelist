@@ -42,3 +42,31 @@ npm install react-recycle-list --save
 
 - [示例代码](./demo/index.tsx)
 - [live demo](https://only4ly.github.io/list/)
+
+### 常见问题
+
+1. 为什么 Cell 的 props 要传一堆的 width,height,top 属性而不是 style 呢
+
+```tsx
+const Cell = memo((props: CellProps<{ name: string }>) => {
+  const { width, height, top, index } = props;
+  return (
+    <div
+      style={{
+        width,
+        height,
+        top,
+        position: 'absolute',
+        backgroundColor: index % 2 === 0 ? 'white' : 'yellow',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <span>{props.data.name + props.index}</span>
+    </div>
+  );
+});
+```
+
+因为这样的话你的 Cell 组件为 memo 组件或者 PureComponent 组件时会得到部分的性能提升
