@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "parcel ./demo/index.html"
+    "start": "parcel ./demo/index.html",
+    "build-demo": "parcel build ./demo/index.html"
   },
   "dependencies": {
     "react": "^16.x"
