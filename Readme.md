@@ -40,4 +40,5 @@ npm install react-recycle-list --save
 
 ### 示例
 
-[示例](./demo/index.tsx)
+[示例代码](./demo/index.tsx)
+[live demo](https://only4ly.github.io/list/)
