@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import List, { CellProps, CellDatas, HeaderFooterProps } from '../src/index';
 import ReactDOM from 'react-dom';
 
-const Header: React.FC<HeaderFooterProps> = memo(({ onHeightChange, style }) => {
+const Header = memo(({ onHeightChange, style }: HeaderFooterProps) => {
   const [height, setHeight] = useState(100);
   return (
     <div
@@ -18,6 +18,7 @@ const Header: React.FC<HeaderFooterProps> = memo(({ onHeightChange, style }) => 
   );
 });
 
+// @ts-ignore
 Header.initHeight = 100;
 
 const Cell = memo((props: CellProps<{ name: string }>) => {
