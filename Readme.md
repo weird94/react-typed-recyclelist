@@ -76,3 +76,5 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 - scrollComputeThrottle: 列表触发重新计算真实渲染内容所需要滚动的距离，这个参数决定了列表在滚动过程中的计算量的大小。默认为 100
 
 所以，如果你出现了上述情况，不妨试试将这两个参数调大一些。
+
+### [实现原理](https://www.yuque.com/zhangw/kgsgvw/sqmr8t)
