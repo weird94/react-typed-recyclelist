@@ -1,16 +1,16 @@
 # React-Reclycle-List
 
-### 描述
+## 描述
 
 一个真正的实现了 DOM 节点回收和复用的高性能虚拟长列表组件
 
-### 安装
+## 安装
 
 ```bash
 npm install react-recycle-list --save
 ```
 
-### 属性
+## 属性
 
 | 属性                  | 类型                                  | 默认 | 必填   | 描述                                                                                         |
 | --------------------- | ------------------------------------- | ---- | ------ | -------------------------------------------------------------------------------------------- |
@@ -34,18 +34,18 @@ npm install react-recycle-list --save
 | onFooterShow          | `() => void`                          |      |        | footer 曝光事件                                                                              |
 | onFooterHide          | `() => void`                          |      |        | footer 消失事件                                                                              |
 
-### 方法
+## 方法
 
 `scrollTo(scrollTop: number): void`: 指定列表滚动到特定位置
 
-### 示例
+## 示例
 
 - [示例代码](./demo/index.tsx)
 - [live demo](https://weird94.github.io/list/normal/)
 
-### 注意 or 常见问题
+## 注意 or 常见问题
 
-#### 当你实现列表的 CellComponent 时, 你必须正确的使用从 props 中传入的 style
+### 当你实现列表的 CellComponent 时, 你必须正确的使用从 props 中传入的 style
 
 ```typescript
 const Cell = memo((props: CellProps<{ name: string }>) => {
@@ -77,14 +77,14 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 
 所以，如果你出现了上述情况，不妨试试将这两个参数调大一些。
 
-#### 如果我的 cell 本身是存在状态的，我该怎么处理呢？
+### 如果我的 cell 本身是存在状态的，我该怎么处理呢？
 
 我们为每个 cell 实现了状态寄存，可以参考
 
 [示例代码](./demo/statefull/index.tsx)
 [Live Demo](https://weird94.github.io/list/statefull/)
 
-#### 如果我的 cell 不仅存在状态，并且我的列表排列顺序会发生改变，又该怎么处理呢？
+### 如果我的 cell 不仅存在状态，并且我的列表排列顺序会发生改变，又该怎么处理呢？
 
 如果顺序会发生改变的情况下，
 
@@ -94,4 +94,4 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 [示例代码](./demo/resort/index.tsx)
 [Live Demo](https://weird94.github.io/list/resort/)
 
-### [实现原理](https://www.yuque.com/zhangw/kgsgvw/sqmr8t)
+## [实现原理](https://www.yuque.com/zhangw/kgsgvw/sqmr8t)
