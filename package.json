@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "start": "parcel ./demo/index.html",
-    "build-demo": "parcel build ./demo/index.html"
+    "build-demo": "parcel build ./demo/index.html",
+    "bsd": "parcel build ./demo/statefull/index.html"
   },
   "dependencies": {
     "react": "^16.x"

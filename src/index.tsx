@@ -2,6 +2,7 @@ import React from 'react';
 import NAMap from './NAMap';
 import { delayCall, runAtIdle } from './util';
 import CellWrapper from './CellWraper';
+import useStoreState from './useStoreState';
 
 export type HeaderFooterProps = {
   onHeightChange: (height: number) => void;
@@ -14,25 +15,25 @@ export type CellWrapperProps = {
   top: number;
   data: any;
   index: number;
+  stores: any;
+  setStore: (store: any, index: number) => void;
+  uniqueKey?: string;
 };
 
 export type CellProps<T> = {
   style: React.CSSProperties;
   data: T;
   index: number;
+  store: any;
+  setStore: (store: any) => void;
 };
 
 export type CellDatas<T> = {
   height: number;
   data: T;
+  uniqueKey?: string;
   Component: React.ComponentType<CellProps<T>>;
 }[];
-
-type CellData = {
-  height: number;
-  data: any;
-  Component: React.ComponentType<CellWrapperProps>;
-};
 
 export type RecyclerListProps = {
   Header?: React.ComponentType<HeaderFooterProps>;
@@ -136,9 +137,15 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
     }
   }
 
-  current: RenderInfo[] = [];
-  topRemoveMap: NAMap = new NAMap();
-  bottomRemoveMap: NAMap = new NAMap();
+  stores: { [index: number]: any } = {};
+
+  private setStore = (store: any, index: number) => {
+    this.stores[index] = store;
+  };
+
+  private current: RenderInfo[] = [];
+  private topRemoveMap: NAMap = new NAMap();
+  private bottomRemoveMap: NAMap = new NAMap();
 
   state: State = {
     // @ts-ignore
@@ -562,6 +569,9 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
                 data={cellData[layoutIndex].data}
                 key={index}
                 Component={TypeComponent}
+                stores={this.stores}
+                setStore={this.setStore}
+                uniqueKey={cellData[layoutIndex].uniqueKey}
               />
             );
           })}
@@ -578,3 +588,5 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
 }
 
 export default RecyclerList;
+
+export { useStoreState };

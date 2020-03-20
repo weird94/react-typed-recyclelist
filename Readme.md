@@ -77,4 +77,14 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 
 所以，如果你出现了上述情况，不妨试试将这两个参数调大一些。
 
+#### 如果我的 cell 本身是存在状态的，我该怎么处理呢？
+
+我们为每个 cell 实现了状态寄存，可以参考
+[示例代码](./demo/statefull/index.tsx)
+[Live Demo](https://weird94.github.io/state-list/)
+
+#### 如果我的 cell 不仅存在状态，并且我的列表排列顺序会发生改变，又该怎么处理呢？
+
+开发中...
+
 ### [实现原理](https://www.yuque.com/zhangw/kgsgvw/sqmr8t)
