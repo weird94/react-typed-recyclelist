@@ -16,8 +16,6 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 
   const bgColor = index % 2 === 0 ? 'white' : 'yellow';
 
-  // console.log('p', props);
-
   return (
     <div
       style={{ ...cellStyle, ...style, backgroundColor: bgColor }}

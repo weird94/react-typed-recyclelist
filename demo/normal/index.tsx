@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import List, { CellProps, CellDatas, HeaderFooterProps } from '../src/index';
+import List, { CellProps, CellDatas, HeaderFooterProps } from '../../src/index';
 import ReactDOM from 'react-dom';
 
 const Header = memo(({ onHeightChange, style }: HeaderFooterProps) => {

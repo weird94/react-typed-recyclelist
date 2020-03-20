@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "a high perfomance list based react tech stack",
   "main": "index.js",
+  "publicUrl": "./",
   "scripts": {
     "test": "jest",
-    "start": "parcel ./demo/index.html",
-    "build-demo": "parcel build ./demo/index.html",
-    "bsd": "parcel build ./demo/statefull/index.html"
+    "start": "parcel ./demo/*/index.html",
+    "build-demo": "rm -rf ./dist && parcel build ./demo/*/index.html --public-url 'https://weird94.github.io/list/'",
+    "dev-demo": "rm -rf ./dist && parcel watch ./demo/*/index.html & serve ./dist"
   },
   "dependencies": {
     "react": "^16.x"
@@ -23,6 +24,7 @@
     "@types/urijs": "^1.19.5",
     "@types/url-parse": "^1.4.3",
     "babel-preset-latest": "^6.24.1",
+    "cross-env": "^7.0.2",
     "jest": "^25.1.0",
     "parcel-bundler": "^1.12.4",
     "react-dom": "^16.13.0",
@@ -30,6 +32,7 @@
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-terser": "^5.2.0",
     "rollup-plugin-typescript": "^1.0.1",
+    "serve": "^11.3.0",
     "ts-jest": "^25.2.1",
     "tslib": "^1.10.0",
     "typescript": "^3.7.5"

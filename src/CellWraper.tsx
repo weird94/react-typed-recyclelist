@@ -21,7 +21,8 @@ const CellWrapper = (props: CellWrapperProps & { Component: React.ComponentType<
       style={style}
       data={data}
       index={index}
-      store={props.stores[storeKey] || {}}
+      store={props.stores[storeKey]}
+      uniqueKey={storeKey}
       setStore={setStore}
       _setStore={props.setStore}
     />

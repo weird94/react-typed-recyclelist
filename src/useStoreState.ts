@@ -6,18 +6,21 @@ type StoreModel = {
 };
 
 function useStoreState<T>(defaultValue: T, key: string, model: StoreModel) {
+  const { store } = model;
   useEffect(() => {
-    model.setStore({ ...model.store, [key]: defaultValue });
-  }, []);
+    if (store === undefined) {
+      model.setStore({ ...store, [key]: defaultValue });
+    }
+  }, [store]);
 
   const setState = useCallback(
     (value: T) => {
-      model.setStore({ ...model.store, [key]: value });
+      model.setStore({ ...store, [key]: value });
     },
-    [key]
+    [key, model.setStore]
   );
 
-  return [model.store[key], setState];
+  return [store && store[key], setState];
 }
 
 export default useStoreState;
