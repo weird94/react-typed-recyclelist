@@ -16,7 +16,7 @@ export type CellWrapperProps = {
   data: any;
   index: number;
   stores: any;
-  setStore: (store: any, index: number) => void;
+  setStore: (store: any, index: number | string) => void;
   uniqueKey?: string;
 };
 
@@ -55,6 +55,7 @@ export type RecyclerListProps = {
   onHeaderHide?: () => void;
   onFooterShow?: () => void;
   onFooterHide?: () => void;
+  sortKey?: string;
 };
 
 type Layout = {
@@ -137,15 +138,17 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
     }
   }
 
-  stores: { [index: number]: any } = {};
+  stores: { [index: string]: any } = {};
 
-  private setStore = (store: any, index: number) => {
-    this.stores[index] = store;
+  private setStore = (store: any, index: number | string) => {
+    this.stores[index + ''] = store;
   };
 
   private current: RenderInfo[] = [];
   private topRemoveMap: NAMap = new NAMap();
   private bottomRemoveMap: NAMap = new NAMap();
+
+  private sortKey?: string;
 
   state: State = {
     // @ts-ignore
@@ -518,12 +521,33 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
     }
   }
 
+  /**
+   * 清空渲染状态
+   */
+  resetList() {
+    this.topRemoveMap = new NAMap();
+    this.bottomRemoveMap = new NAMap();
+    this.current = [];
+    this.handleScrollPure(
+      this.container.current ? this.container.current.scrollTop : this.lastScrollTop
+    );
+  }
+
   scrollTo(offset: number) {
     this.handleScrollPure(offset);
+    this.container.current?.scrollTo({ top: offset });
   }
 
   componentDidMount() {
     this.handleScrollPure(this.props.defaultScrollTop || 0);
+  }
+
+  componentDidUpdate() {
+    const { sortKey } = this.props;
+    if (sortKey !== this.sortKey) {
+      this.sortKey = sortKey;
+      this.resetList();
+    }
   }
 
   render() {
