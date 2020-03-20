@@ -41,7 +41,7 @@ npm install react-recycle-list --save
 ### 示例
 
 - [示例代码](./demo/index.tsx)
-- [live demo](https://weird94.github.io/list/)
+- [live demo](https://weird94.github.io/list/normal/)
 
 ### 注意 or 常见问题
 
@@ -81,7 +81,7 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 
 我们为每个 cell 实现了状态寄存，可以参考
 [示例代码](./demo/statefull/index.tsx)
-[Live Demo](https://weird94.github.io/state-list/)
+[Live Demo](https://weird94.github.io/list/statefull/)
 
 #### 如果我的 cell 不仅存在状态，并且我的列表排列顺序会发生改变，又该怎么处理呢？
 
