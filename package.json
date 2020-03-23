@@ -1,8 +1,9 @@
 {
-  "name": "react-recyclelist",
+  "name": "react-typed-recyclelist",
   "version": "1.0.0",
   "description": "a high perfomance list based react tech stack",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
   "typings": "dist/types/index.d.ts",
   "publicUrl": "./",
   "scripts": {
