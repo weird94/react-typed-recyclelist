@@ -4,3 +4,9 @@ dist/types/*.js
 node_modules
 *.lock
 *.log
+.cache/
+demo/
+.gitignore
+jest.config.js
+parcel.js
+tsconfig.json

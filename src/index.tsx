@@ -614,5 +614,3 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
 }
 
 export default RecyclerList;
-
-export { useStoreState };

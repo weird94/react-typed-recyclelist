@@ -13,7 +13,7 @@ const outputs = [
 ];
 
 export default outputs.map(output => ({
-  input: 'src/index.ts',
+  input: './index.ts',
   output: output,
   plugins: [
     typescript(),

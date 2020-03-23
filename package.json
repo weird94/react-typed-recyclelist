@@ -8,7 +8,8 @@
     "test": "jest",
     "start": "parcel ./demo/*/index.html",
     "build-demo": "rm -rf ./dist && parcel build ./demo/*/index.html --public-url 'https://weird94.github.io/list/'",
-    "dev-demo": "rm -rf ./dist && parcel watch ./demo/*/index.html & serve ./dist"
+    "dev-demo": "rm -rf ./dist && parcel watch ./demo/*/index.html & serve ./dist",
+    "build-component": "rollup -c && tsc"
   },
   "dependencies": {
     "react": "^16.x"
