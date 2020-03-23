@@ -1,5 +1,5 @@
 {
-  "name": "react-list",
+  "name": "react-recyclelist",
   "version": "1.0.0",
   "description": "a high perfomance list based react tech stack",
   "main": "dist/index.js",
