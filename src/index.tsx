@@ -25,7 +25,9 @@ export type CellProps<T> = {
   data: T;
   index: number;
   store: any;
+  uniqueKey?: string;
   setStore: (store: any) => void;
+  _setStore: (store: any, index: number | string) => void;
 };
 
 export type CellDatas<T> = {

@@ -43,9 +43,9 @@ npm install react-recyclelist --save
 - [示例代码](./demo/index.tsx)
 - [live demo](https://weird94.github.io/list/normal/)
 
-## hooks
+## Cell 组件自有状态
 
-`useStoreState`
+1. `useStoreState`
 
 ```tsx
 import { useStoreState } from 'react-recyclelist';
@@ -56,6 +56,35 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 
 // useStoreState 是为了让 cell 组件能够实现自状态而设计
 // 通过将状态寄存在 list 内部的 stateMap 上而实现
+```
+
+2. `StoreComponent`
+
+```tsx
+import { StoreComponent } from 'react-recyclelist';
+
+class CellComponent extends StoreComponent {
+  state = {
+    a: 1,
+    b: 2
+  };
+
+  render() {
+    return <div>{this.state.a}</div>;
+  }
+
+  // 如果你需要使用这个生命周期，你必须调用 super.componentDidUpdate();
+  componentDidUpdate() {
+    super.componentDidUpdate();
+    // ...
+  }
+
+  // 如果你需要使用这个生命周期，你必须调用 super.componentDidMount();
+  componentDidMount() {
+    super.componentDidMount();
+    // ...
+  }
+}
 ```
 
 ## 注意 or 常见问题
