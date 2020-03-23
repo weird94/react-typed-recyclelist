@@ -227,7 +227,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
 
     const { headerHeight, layouts } = this.state;
     const { current } = this;
-    const { height, renderAccuary = 3 } = this.props;
+    const { height, renderAccuary = 5 } = this.props;
 
     const isScrollDown = lastScrollTop <= scrollTop;
     const len = layouts.length;
