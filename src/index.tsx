@@ -2,7 +2,6 @@ import React from 'react';
 import NAMap from './NAMap';
 import { delayCall, runAtIdle } from './util';
 import CellWrapper from './CellWraper';
-import useStoreState from './useStoreState';
 
 export type HeaderFooterProps = {
   onHeightChange: (height: number) => void;
