@@ -7,7 +7,7 @@
 ## 安装
 
 ```bash
-npm install react-recycle-list --save
+npm install react-recyclelist --save
 ```
 
 ## 属性
@@ -42,6 +42,21 @@ npm install react-recycle-list --save
 
 - [示例代码](./demo/index.tsx)
 - [live demo](https://weird94.github.io/list/normal/)
+
+## hooks
+
+`useStoreState`
+
+```tsx
+import { useStoreState } from 'react-recyclelist';
+
+const Cell = memo((props: CellProps<{ name: string }>) => {
+  const [active, setActive] = useStoreState(false, 'active', props);
+};
+
+// useStoreState 是为了让 cell 组件能够实现自状态而设计
+// 通过将状态寄存在 list 内部的 stateMap 上而实现
+```
 
 ## 注意 or 常见问题
 
