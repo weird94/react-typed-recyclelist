@@ -42,15 +42,12 @@ test('SortedArray.push', () => {
     sorted.push(0);
     expect('this should not be called').toBe(2);
   } catch (error) {
-    console.log('error', error);
     expect(typeof error).toBe('string');
   }
 
   expect(sorted.getList().length).toBe(2);
-  console.log('sorted', sorted.getList());
 
   sorted.push(1);
-  console.log('sorted', sorted.getList());
 
   expect(sorted.getList().length).toBe(3);
 

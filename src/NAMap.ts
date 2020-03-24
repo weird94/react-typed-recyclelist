@@ -9,15 +9,21 @@ type Info = RenderInfo & { type: React.ComponentType<any> };
  *     value 为有序的 number 数组
  */
 export default class NAMap {
-  private instance: Map<React.ComponentType<any>, SortedArray<{ i: number; dom: number }>>;
+  instance: Map<React.ComponentType<any>, SortedArray<{ i: number; dom: number }>>;
 
-  get totalList() {
-    const arr: RenderInfo[] = [];
-    this.instance.forEach(x => {
-      arr.concat(x.getList());
-    });
+  get _totalList() {
+    let totalList: Info[] = [];
 
-    return arr;
+    const itor = this.instance.entries();
+    let item = itor.next();
+    while (!item.done) {
+      const [type, arr] = item.value;
+      totalList = totalList.concat(arr.getList().map(i => ({ type, ...i })));
+
+      item = itor.next();
+    }
+
+    return totalList;
   }
 
   constructor() {
@@ -34,7 +40,7 @@ export default class NAMap {
     if (current) {
       current.push({ i: value, dom });
     } else {
-      this.instance.set(key, new SortedArray([{ i: value, dom }], i => i));
+      this.instance.set(key, new SortedArray([{ i: value, dom }], i => i.i));
     }
   }
 
@@ -57,19 +63,19 @@ export default class NAMap {
 
   getFirst(key: React.ComponentType<any>) {
     const current = this.instance.get(key);
-    return current ? current.getFirst().i : undefined;
+    return current ? current.getFirst() : undefined;
   }
 
   getLast(key: React.ComponentType<any>) {
     const current = this.instance.get(key);
     if (current) {
-      return current.getLast().i;
+      return current.getLast();
     } else {
       return undefined;
     }
   }
 
   getList() {
-    return this.totalList;
+    return this._totalList;
   }
 }

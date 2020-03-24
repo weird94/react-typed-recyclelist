@@ -279,12 +279,15 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
           shouldSetState = true;
           let shouldReuseOldItem = false;
           let oldRenderInfo: RenderInfo | undefined = undefined;
-          const bottomOldItem = this.bottomRemoveMap.getFirst(nextItem.type);
+          const removed = this.bottomRemoveMap.getFirst(nextItem.type);
+          const bottomOldItem = removed?.i;
+
           if (bottomOldItem !== undefined) {
             shouldReuseOldItem = true;
             oldRenderInfo = this.bottomRemoveMap.remove(nextItem.type, bottomOldItem);
           } else {
-            const topOldItem = this.topRemoveMap.getFirst(nextItem.type);
+            const removed = this.topRemoveMap.getFirst(nextItem.type);
+            const topOldItem = removed?.i;
             if (topOldItem !== undefined) {
               const oldItemLayout = layouts[topOldItem];
               shouldReuseOldItem = oldItemLayout.top + oldItemLayout.height < start;
@@ -347,13 +350,16 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
           shouldSetState = true;
           let shouldReuseOldItem = false;
           let oldRenderInfo: RenderInfo | undefined = undefined;
-          const topOldItem = this.topRemoveMap.getLast(nextItem.type);
+          const removed = this.topRemoveMap.getLast(nextItem.type);
+          const topOldItem = removed?.i;
 
           if (topOldItem !== undefined) {
             shouldReuseOldItem = true;
             oldRenderInfo = this.topRemoveMap.remove(nextItem.type, topOldItem);
           } else {
-            const bottomOldItem = this.bottomRemoveMap.getLast(nextItem.type);
+            const removed = this.bottomRemoveMap.getLast(nextItem.type);
+            const bottomOldItem = removed?.i;
+
             if (bottomOldItem !== undefined) {
               const oldItemLayout = layouts[bottomOldItem];
               shouldReuseOldItem = oldItemLayout.top > end;
