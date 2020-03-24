@@ -7,7 +7,7 @@
 ## 安装
 
 ```bash
-npm install react-recyclelist --save
+emm... 还没最终release
 ```
 
 ## 属性
