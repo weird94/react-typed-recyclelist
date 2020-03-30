@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { CellProps } from '.';
+import { CellProps } from './index';
 
 class StoreComponent<T> extends Component<CellProps<T>> {
   _preKey = '';

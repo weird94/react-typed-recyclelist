@@ -1,4 +1,4 @@
-import { RenderInfo } from '.';
+import { RenderInfo } from './index';
 import SortedArray from './SortedArray';
 
 type Info = RenderInfo & { type: React.ComponentType<any> };
