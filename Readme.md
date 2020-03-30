@@ -10,6 +10,16 @@
 emm... 还没最终release
 ```
 
+## Try the Demo
+
+```bash
+git clone https://github.com/weird94/react-recycle-list.git
+cd react-recycle-list
+yarn
+yarn dev-demo
+
+```
+
 ## 属性
 
 | 属性                  | 类型                                  | 默认 | 必填   | 描述                                                                                         |
