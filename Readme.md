@@ -4,6 +4,8 @@
 
 一个真正的实现了 DOM 节点回收和复用的高性能虚拟长列表组件
 
+## [实现原理](https://www.yuque.com/zhangw/kgsgvw/sqmr8t)
+
 ## 安装
 
 ```bash
@@ -76,7 +78,7 @@ import { StoreComponent } from 'react-recyclelist';
 class CellComponent extends StoreComponent {
   state = {
     a: 1,
-    b: 2
+    b: 2,
   };
 
   render() {
@@ -111,7 +113,7 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
         backgroundColor: index % 2 === 0 ? 'white' : 'yellow',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
       }}
     >
       <span>{props.data.name + props.index}</span>
@@ -147,5 +149,3 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 
 [示例代码](./demo/resort/index.tsx)
 [Live Demo](https://weird94.github.io/list/resort/)
-
-## [实现原理](https://www.yuque.com/zhangw/kgsgvw/sqmr8t)
