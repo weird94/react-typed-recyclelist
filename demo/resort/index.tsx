@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useCallback, useEffect } from 'react';
 import List, { CellProps, CellDatas } from '../../src/index';
 import useStoreState from '../../src/useStoreState';
 import ReactDOM from 'react-dom';
@@ -7,7 +7,7 @@ const cellStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  flexDirection: 'column'
+  flexDirection: 'column',
 };
 
 const Cell = memo((props: CellProps<{ name: string; index: number }>) => {
@@ -24,7 +24,7 @@ const Cell = memo((props: CellProps<{ name: string; index: number }>) => {
       <div
         style={{
           color: active ? 'red' : 'black',
-          fontWeight: active ? 'bolder' : 'normal'
+          fontWeight: active ? 'bolder' : 'normal',
         }}
       >
         [{data.index}] active: <span>{active + ''}</span>
@@ -40,13 +40,29 @@ const cellData: CellDatas<{ name: string; index: number }> = Array(1000)
       height: 100,
       data: { name: `name`, index: i },
       Component: Cell,
-      uniqueKey: i + ''
+      uniqueKey: i + '',
     };
   });
+
+const useResize = () => {
+  const [key, setKey] = useState(0);
+  const resizeHandler = useCallback(() => {
+    setKey(Math.random());
+  }, []);
+  useEffect(() => {
+    window.addEventListener('resize', resizeHandler);
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
+
+  return key;
+};
 
 const Demo = () => {
   const [data, setData] = useState(cellData);
   const [sortKey, setSortKey] = useState('0');
+  const key = useResize();
 
   const reverse = () => {
     data.reverse();
@@ -66,13 +82,19 @@ const Demo = () => {
           position: 'absolute',
           top: 20,
           right: 20,
-          zIndex: 100
+          zIndex: 100,
         }}
         onClick={reverse}
       >
         reverse
       </div>
-      <List height={screen.height} width={screen.width} cellData={data} sortKey={sortKey} />
+      <List
+        key={key}
+        height={window.innerHeight}
+        width={window.innerWidth}
+        cellData={data}
+        sortKey={sortKey}
+      />
     </>
   );
 };

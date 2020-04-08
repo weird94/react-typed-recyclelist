@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect, useCallback } from 'react';
 import List, { CellProps, CellDatas } from '../../src/index';
 import useStoreState from '../../src/useStoreState';
 import ReactDOM from 'react-dom';
@@ -7,7 +7,7 @@ const cellStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  flexDirection: 'column'
+  flexDirection: 'column',
 };
 
 const Cell = memo((props: CellProps<{ name: string }>) => {
@@ -24,7 +24,7 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
       <div
         style={{
           color: active ? 'red' : 'black',
-          fontWeight: active ? 'bolder' : 'normal'
+          fontWeight: active ? 'bolder' : 'normal',
         }}
       >
         [{index}] active: <span>{active + ''}</span>
@@ -39,12 +39,30 @@ const cellData: CellDatas<{ name: string }> = Array(1000)
     return {
       height: 100,
       data: { name: `name` },
-      Component: Cell
+      Component: Cell,
     };
   });
 
+const useResize = () => {
+  const [key, setKey] = useState(0);
+  const resizeHandler = useCallback(() => {
+    setKey(Math.random());
+  }, []);
+  useEffect(() => {
+    window.addEventListener('resize', resizeHandler);
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
+
+  return key;
+};
+
 const Demo = () => {
-  return <List height={screen.height} width={screen.width} cellData={cellData} />;
+  const key = useResize();
+  return (
+    <List key={key} height={window.innerHeight} width={window.innerWidth} cellData={cellData} />
+  );
 };
 
 ReactDOM.render(<Demo />, document.getElementById('root'));

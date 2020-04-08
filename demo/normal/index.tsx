@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useCallback } from 'react';
 import List, { CellProps, CellDatas, HeaderFooterProps } from '../../src/index';
 import ReactDOM from 'react-dom';
 
@@ -30,7 +30,7 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
         backgroundColor: index % 2 === 0 ? 'white' : 'yellow',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
       }}
     >
       <span>{props.data.name + props.index}</span>
@@ -44,7 +44,7 @@ const cellData: CellDatas<{ name: string }> = Array(1000)
     return {
       height: ~~(100 + Math.random() * 30),
       data: { name: `name` },
-      Component: Cell
+      Component: Cell,
     };
   });
 
@@ -63,7 +63,7 @@ const Cell2 = memo((props: CellProps<{ title: string; subTitle: string }>) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        flexDirection: 'column'
+        flexDirection: 'column',
       }}
     >
       <h4>{props.data.title + props.index}</h4>
@@ -78,14 +78,39 @@ const cellData2: CellDatas<{ title: string; subTitle: string }> = Array(1000)
     return {
       height: ~~(100 + Math.random() * 30),
       data: { title: `title`, subTitle: `subtile` },
-      Component: Cell2
+      Component: Cell2,
     };
   });
 
 const renderData = [...cellData, ...cellData2].sort(() => Math.random() - 0.5);
 
+const useResize = () => {
+  const [key, setKey] = useState(0);
+  const resizeHandler = useCallback(() => {
+    setKey(Math.random());
+  }, []);
+  useEffect(() => {
+    window.addEventListener('resize', resizeHandler);
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
+
+  return key;
+};
+
 const Demo = () => {
-  return <List Header={Header} height={screen.height} width={screen.width} cellData={renderData} />;
+  const key = useResize();
+
+  return (
+    <List
+      key={key}
+      Header={Header}
+      height={window.innerHeight}
+      width={window.innerWidth}
+      cellData={renderData}
+    />
+  );
 };
 
 ReactDOM.render(<Demo />, document.getElementById('root'));
