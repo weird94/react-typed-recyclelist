@@ -9,7 +9,15 @@
 ## 安装
 
 ```bash
-emm... 还没最终release
+npm install --save react-typed-recyclelist
+# or
+yarn add react-typed-recyclelist
+```
+
+## 使用
+
+```ts
+import List, { StoreComponent, useStoreState } from 'react-typed-recyclelist';
 ```
 
 ## Try the Demo
