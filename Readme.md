@@ -1,8 +1,6 @@
 # React-Typed-Reclyclelist
 
-## 描述
-
-一个真正的实现了 DOM 节点回收和复用的高性能虚拟长列表组件
+> 一个真正的实现了 DOM 节点回收和复用的高性能虚拟长列表组件
 
 ## [实现原理](https://zhuanlan.zhihu.com/p/115901798)
 
