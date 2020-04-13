@@ -66,7 +66,7 @@ yarn dev-demo
 1. `useStoreState`
 
 ```tsx
-import { useStoreState } from 'react-recyclelist';
+import { useStoreState } from 'react-typed-recyclelist';
 
 const Cell = memo((props: CellProps<{ name: string }>) => {
   const [active, setActive] = useStoreState(false, 'active', props);
@@ -79,7 +79,7 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 2. `StoreComponent`
 
 ```tsx
-import { StoreComponent } from 'react-recyclelist';
+import { StoreComponent } from 'react-typed-recyclelist';
 
 class CellComponent extends StoreComponent {
   state = {
