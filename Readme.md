@@ -21,8 +21,8 @@ import List, { StoreComponent, useStoreState } from 'react-typed-recyclelist';
 ## Try the Demo
 
 ```bash
-git clone https://github.com/weird94/react-recycle-list.git
-cd react-recycle-list
+git clone https://github.com/weird94/react-typed-recyclelist.git
+cd react-typed-recyclelist
 yarn
 yarn dev-demo
 
@@ -143,8 +143,8 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 
 我们为每个 cell 实现了状态寄存，可以参考
 
-[示例代码](./demo/statefull/index.tsx)
-[Live Demo](https://weird94.github.io/list/statefull/)
+- [示例代码](./demo/statefull/index.tsx)
+- [Live Demo](https://weird94.github.io/list/statefull/)
 
 ### 如果我的 cell 不仅存在状态，并且我的列表排列顺序会发生改变，又该怎么处理呢？
 
@@ -153,5 +153,5 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
 1. 我们提供了 sortKey props 来标示列表顺序的版本，以此驱动列表重新渲染并且清空回收池
 2. 我们允许你为数据打上唯一的 uniqueKey，这样来保证 store 和数据的一一对应
 
-[示例代码](./demo/resort/index.tsx)
-[Live Demo](https://weird94.github.io/list/resort/)
+- [示例代码](./demo/resort/index.tsx)
+- [Live Demo](https://weird94.github.io/list/resort/)
