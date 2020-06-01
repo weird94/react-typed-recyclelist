@@ -435,9 +435,9 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
 
   private tryTriggerEndReachedEvent(scrollTop: number) {
     const { headerHeight, footerHeight, contentHeight } = this.state;
-    const { onEndReachedThreshold = 500, onEndReached } = this.props;
+    const { onEndReachedThreshold = 500, onEndReached, height } = this.props;
     const totalHeight = headerHeight + footerHeight + contentHeight;
-    if (totalHeight - scrollTop < onEndReachedThreshold) {
+    if (totalHeight - scrollTop - height < onEndReachedThreshold) {
       typeof onEndReached === 'function' && onEndReached();
     }
   }
