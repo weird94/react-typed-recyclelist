@@ -1,6 +1,6 @@
 import React from 'react';
 import NAMap from './NAMap';
-import { delayCall, runAtIdle } from './util';
+import { delayCall } from './util';
 import CellWrapper from './CellWraper';
 
 export type HeaderFooterProps = {
@@ -82,19 +82,19 @@ type State = {
 const scrollStyle: React.CSSProperties = {
   WebkitOverflowScrolling: 'touch',
   overflowX: 'hidden',
-  overflowY: 'scroll'
+  overflowY: 'scroll',
 };
 
 const headerStyle: React.CSSProperties = {
   position: 'absolute',
   top: 0,
-  left: 0
+  left: 0,
 };
 
 const footerStyle: React.CSSProperties = {
   position: 'absolute',
   bottom: 0,
-  left: 0
+  left: 0,
 };
 
 class RecyclerList extends React.Component<RecyclerListProps, State> {
@@ -123,7 +123,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
       if (!isCellDataEqual) {
         Object.assign(newState, {
           ...RecyclerList.computedRenderCellLayouts(props),
-          cellData: props.cellData
+          cellData: props.cellData,
         });
       }
 
@@ -131,7 +131,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
         Object.assign(newState, {
           width: width,
           headerStyle: { ...headerStyle, width },
-          footerStyle: { ...footerStyle, width }
+          footerStyle: { ...footerStyle, width },
         });
       }
 
@@ -162,7 +162,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
     contentHeight: 0,
     width: 0,
     headerStyle: {},
-    footerStyle: {}
+    footerStyle: {},
   };
 
   lastScrollTop: number = NaN;
@@ -219,7 +219,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
 
     return {
       renderCurrent: newRenderCurrent,
-      shouldSetState: true
+      shouldSetState: true,
     };
   }
 
@@ -253,7 +253,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
           this.topRemoveMap.push({
             i: thisCurrent.i,
             dom: thisCurrent.dom,
-            type: thisLayout.type
+            type: thisLayout.type,
           });
         } else {
           current.splice(0, i);
@@ -307,7 +307,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
             dom:
               current.length +
               this.topRemoveMap.getList().length +
-              this.bottomRemoveMap.getList().length
+              this.bottomRemoveMap.getList().length,
           });
         } else {
           // 不需要向末尾增加模块了, 跳出循环
@@ -324,7 +324,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
           this.bottomRemoveMap.push({
             i: thisCurrent.i,
             dom: thisCurrent.dom,
-            type: thisLayout.type
+            type: thisLayout.type,
           });
         } else {
           current.splice(i + 1, current.length - i - 1);
@@ -380,7 +380,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
             dom:
               current.length +
               this.topRemoveMap.getList().length +
-              this.bottomRemoveMap.getList().length
+              this.bottomRemoveMap.getList().length,
           });
         } else {
           break;
@@ -391,14 +391,14 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
     const newRenderCurrent = [
       ...this.topRemoveMap.getList(),
       ...current,
-      ...this.bottomRemoveMap.getList()
+      ...this.bottomRemoveMap.getList(),
     ]
       .sort((a, b) => a.dom - b.dom)
-      .map(i => i.i);
+      .map((i) => i.i);
 
     return {
       renderCurrent: newRenderCurrent,
-      shouldSetState
+      shouldSetState,
     };
   }
 
@@ -417,9 +417,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
       const scrollTop = container.scrollTop;
       this.tryTriggerEndReachedEvent(scrollTop);
       this.triggerScrollEvent(scrollTop, event);
-      runAtIdle(() => {
-        this.computeShowEvent(scrollTop);
-      });
+      this.computeShowEvent(scrollTop);
       const lastScrollTop = this.lastScrollTop;
       const { scrollComputeThrottle = 100 } = this.props;
       if (Math.abs(scrollTop - lastScrollTop) < scrollComputeThrottle) return;
@@ -464,11 +462,11 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
     for (let i = 0, len = this.current.length; i < len; i++) {
       const index = current[i].i;
       const layout = layouts[index];
-      if (!firstShowItem && layout.top + layout.height > start) {
+      if (Number.isNaN(firstShowItem) && layout.top + layout.height > start) {
         firstShowItem = index;
       } else {
         if (layout.top > end) {
-          lastShowItem = index;
+          lastShowItem = index - 1;
           break;
         }
       }
@@ -480,18 +478,30 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
 
     if (Number.isNaN(this.cellFirstShowIndex) || Number.isNaN(this.cellLastShowIndex)) {
       for (let i = firstShowItem; i < lastShowItem; i++) {
-        typeof onCellShow === 'function' && delayCall(() => onCellShow(i));
+        if (
+          Number.isNaN(this.cellFirstShowIndex) ||
+          i < this.cellFirstShowIndex ||
+          i > this.cellLastShowIndex
+        ) {
+          typeof onCellShow === 'function' && onCellShow(i);
+        }
       }
     } else {
+      for (let i = firstShowItem; i < lastShowItem; i++) {
+        if (i < this.cellFirstShowIndex || i >= this.cellLastShowIndex) {
+          typeof onCellShow === 'function' && onCellShow(i);
+        }
+      }
+
       for (let i = this.cellFirstShowIndex; i < this.cellLastShowIndex; i++) {
         if (i < firstShowItem || i >= lastShowItem) {
-          typeof onCellHide === 'function' && delayCall(() => onCellHide(i));
+          typeof onCellHide === 'function' && onCellHide(i);
         }
       }
     }
 
     this.cellFirstShowIndex = firstShowItem;
-    this.cellFirstShowIndex = lastShowItem;
+    this.cellLastShowIndex = lastShowItem;
   }
 
   private comuteHeaderShow(scrollTop: number) {
@@ -546,7 +556,9 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
   }
 
   componentDidMount() {
-    this.handleScrollPure(this.props.defaultScrollTop || 0);
+    const scrollTop = this.props.defaultScrollTop || 0;
+    this.handleScrollPure(scrollTop);
+    this.computeShowEvent(scrollTop);
   }
 
   componentDidUpdate() {
@@ -565,7 +577,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
       contentHeight,
       headerHeight,
       footerHeight,
-      cellData
+      cellData,
     } = this.state;
     return (
       <div
@@ -578,7 +590,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
           style={{
             width,
             height: headerHeight + footerHeight + contentHeight,
-            position: 'relative'
+            position: 'relative',
           }}
         >
           {Header ? (
