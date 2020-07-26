@@ -109,6 +109,12 @@ const Demo = () => {
       height={window.innerHeight}
       width={window.innerWidth}
       cellData={renderData}
+      onCellHide={(i) => {
+        console.log('onCellHide', i);
+      }}
+      onCellShow={(i) => {
+        console.log('onCellShow', i);
+      }}
     />
   );
 };
