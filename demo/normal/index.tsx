@@ -3,12 +3,12 @@ import List, { CellProps, CellDatas, HeaderFooterProps } from '../../src/index';
 import ReactDOM from 'react-dom';
 
 const Header = memo(({ onHeightChange, style }: HeaderFooterProps) => {
-  const [height, setHeight] = useState(100);
+  const [height, setHeight] = useState(160);
   return (
     <div
-      style={{ height, textAlign: 'center', backgroundColor: 'green', ...style }}
+      style={{ height: height - 10, textAlign: 'center', backgroundColor: 'green', ...style }}
       onClick={() => {
-        const height1 = 100 + ~~(Math.random() * 20);
+        const height1 = 160 + ~~(Math.random() * 20);
         setHeight(height1);
         onHeightChange(height1);
       }}
@@ -19,7 +19,7 @@ const Header = memo(({ onHeightChange, style }: HeaderFooterProps) => {
 });
 
 // @ts-ignore
-Header.initHeight = 100;
+Header.initHeight = 160;
 
 const Cell = memo((props: CellProps<{ name: string }>) => {
   const { style, index } = props;
