@@ -19,3 +19,31 @@ export function runAtIdle(func: () => void) {
     requestAnimationFrame(func);
   }
 }
+
+export function getMinIndex(nums: number[]) {
+  let min = nums[0];
+  let minIndex = 0;
+
+  for (let i = 1, len = nums.length; i < len; i++) {
+    const current = nums[i];
+    if (current < min) {
+      min = current;
+      minIndex = i;
+    }
+  }
+
+  return minIndex;
+}
+
+export function getMax(nums: number[]) {
+  let max = nums[0];
+
+  for (let i = 1, len = nums.length; i < len; i++) {
+    const current = nums[i];
+    if (current > max) {
+      max = current;
+    }
+  }
+
+  return max;
+}

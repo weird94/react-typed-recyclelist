@@ -27,10 +27,13 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
     <div
       style={{
         ...style,
-        backgroundColor: index % 2 === 0 ? 'white' : 'yellow',
+        backgroundColor: 'yellow',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        height: +props.style.height - 10,
+        marginBottom: 10,
+        borderRadius: 8,
       }}
     >
       <span>{props.data.name + props.index}</span>
@@ -64,6 +67,9 @@ const Cell2 = memo((props: CellProps<{ title: string; subTitle: string }>) => {
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
+        height: +props.style.height - 10,
+        marginBottom: 10,
+        borderRadius: 8,
       }}
     >
       <h4>{props.data.title + props.index}</h4>
@@ -76,7 +82,7 @@ const cellData2: CellDatas<{ title: string; subTitle: string }> = Array(1000)
   .fill(1)
   .map((_, i) => {
     return {
-      height: ~~(100 + Math.random() * 30),
+      height: ~~(200 + Math.random() * 30),
       data: { title: `title`, subTitle: `subtile` },
       Component: Cell2,
     };
@@ -109,11 +115,15 @@ const Demo = () => {
       height={window.innerHeight}
       width={window.innerWidth}
       cellData={renderData}
+      leftGap={10}
+      rightGap={10}
+      columnGap={10}
+      columns={2}
       onCellHide={(i) => {
-        console.log('onCellHide', i);
+        // console.log('onCellHide', i);
       }}
       onCellShow={(i) => {
-        console.log('onCellShow', i);
+        // console.log('onCellShow', i);
       }}
     />
   );
