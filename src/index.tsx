@@ -1,6 +1,6 @@
 import React from 'react';
 import NAMap from './NAMap';
-import { delayCall } from './util';
+import { delayCall, getMinIndex, getMax } from './util';
 import CellWrapper from './CellWraper';
 
 export type HeaderFooterProps = {
@@ -17,6 +17,7 @@ export type CellWrapperProps = {
   stores: any;
   setStore: (store: any, index: number | string) => void;
   uniqueKey?: string;
+  left: number;
 };
 
 export type CellProps<T> = {
@@ -42,6 +43,10 @@ export type RecyclerListProps = {
   cellData: CellDatas<any>;
   height: number;
   width: number;
+  columnGap?: number; // 列与列之间的间歇
+  leftGap?: number; // 列与容器左边的间歇
+  rightGap?: number; // 列与容器右边的间歇
+  columns?: number; // 瀑布了列的数量
   style?: React.CSSProperties;
   className?: string;
   renderAccuary?: number;
@@ -56,12 +61,14 @@ export type RecyclerListProps = {
   onHeaderHide?: () => void;
   onFooterShow?: () => void;
   onFooterHide?: () => void;
-  sortKey?: string;
+  forceRelayoutKey?: string;
 };
 
 type Layout = {
   height: number;
   top: number;
+  left: number;
+  width: number;
   type: React.ComponentType<CellProps<any>>;
 };
 
@@ -77,6 +84,8 @@ type State = {
   width: number;
   headerStyle: React.CSSProperties;
   footerStyle: React.CSSProperties;
+  forceRelayoutKey: string;
+  columnHeights: number[];
 };
 
 const scrollStyle: React.CSSProperties = {
@@ -98,17 +107,35 @@ const footerStyle: React.CSSProperties = {
 };
 
 class RecyclerList extends React.Component<RecyclerListProps, State> {
-  static computedRenderCellLayouts(props: RecyclerListProps) {
+  static computedRenderCellLayouts(props: RecyclerListProps, state: State) {
+    const shouldRelayout = state.forceRelayoutKey === props.forceRelayoutKey;
+    const lastLength = state.cellData.length;
+    const columnHeights = state.columnHeights;
+    const { columns = 1, leftGap = 0, rightGap = 0, columnGap = 0, width } = props;
+    const itemWidth = (width - leftGap - rightGap - (columns - 1) * columnGap) / columns;
     const layouts: Layout[] = [];
     let totalHeight = 0;
 
-    for (let i = 0, len = props.cellData.length; i < len; i++) {
+    const startIndex = shouldRelayout ? 0 : lastLength;
+
+    for (let i = startIndex, len = props.cellData.length; i < len; i++) {
       const { height, Component } = props.cellData[i];
-      layouts.push({ height, top: totalHeight, type: Component });
+      const shouldInsertColumnIndex = getMinIndex(columnHeights);
+      const currentHeight = columnHeights[shouldInsertColumnIndex];
+
+      columnHeights[shouldInsertColumnIndex] = currentHeight + height;
+
+      layouts.push({
+        height,
+        top: currentHeight,
+        type: Component,
+        width: itemWidth,
+        left: leftGap + shouldInsertColumnIndex * (columnGap + itemWidth),
+      });
       totalHeight += height;
     }
 
-    return { layouts, contentHeight: totalHeight };
+    return { layouts, contentHeight: getMax(columnHeights) };
   }
 
   static getDerivedStateFromProps(props: RecyclerListProps, state: State) {
@@ -122,7 +149,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
       const newState = {};
       if (!isCellDataEqual) {
         Object.assign(newState, {
-          ...RecyclerList.computedRenderCellLayouts(props),
+          ...RecyclerList.computedRenderCellLayouts(props, state),
           cellData: props.cellData,
         });
       }
@@ -149,7 +176,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
   private topRemoveMap: NAMap = new NAMap();
   private bottomRemoveMap: NAMap = new NAMap();
 
-  private sortKey?: string;
+  private forceRelayoutKey?: string;
 
   state: State = {
     // @ts-ignore
@@ -163,6 +190,8 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
     width: 0,
     headerStyle: {},
     footerStyle: {},
+    forceRelayoutKey: '',
+    columnHeights: Array(this.props.columns).fill(0),
   };
 
   lastScrollTop: number = NaN;
@@ -562,9 +591,9 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
   }
 
   componentDidUpdate() {
-    const { sortKey } = this.props;
-    if (sortKey !== this.sortKey) {
-      this.sortKey = sortKey;
+    const { forceRelayoutKey } = this.props;
+    if (forceRelayoutKey !== this.forceRelayoutKey) {
+      this.forceRelayoutKey = forceRelayoutKey;
       this.resetList();
     }
   }
@@ -601,13 +630,14 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
           ) : null}
           {renderCurrent.map((layoutIndex, index) => {
             const layout = layouts[layoutIndex];
-            const { type: TypeComponent, height, top } = layout;
+            const { type: TypeComponent, height, top, left, width } = layout;
 
             return (
               <CellWrapper
                 height={height}
                 width={width}
                 top={top + headerHeight}
+                left={left}
                 index={layoutIndex}
                 data={cellData[layoutIndex].data}
                 key={index}

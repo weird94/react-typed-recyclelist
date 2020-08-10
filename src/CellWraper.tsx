@@ -3,11 +3,16 @@ import { CellWrapperProps } from './index';
 
 const CellWrapper = (props: CellWrapperProps & { Component: React.ComponentType<any> }) => {
   const [, setKey] = useState(0);
-  const { height, width, top, data, index, Component, uniqueKey } = props;
+  const { height, width, top, data, index, left, Component, uniqueKey } = props;
 
   const storeKey = uniqueKey == undefined ? index : uniqueKey;
 
-  const style = useMemo(() => ({ height, width, top, position: 'absolute' }), [height, width, top]);
+  const style = useMemo(() => ({ height, width, top, left, position: 'absolute' }), [
+    height,
+    width,
+    top,
+    left,
+  ]);
   const setStore = useCallback(
     (store: any) => {
       props.setStore(store, storeKey);
