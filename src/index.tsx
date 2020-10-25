@@ -14,20 +14,18 @@ export type CellWrapperProps = {
   top: number;
   data: any;
   index: number;
-  stores: any;
-  setStore: (store: any, index: number | string) => void;
   uniqueKey?: string;
   left: number;
+  cellExtraProps?: any;
 };
 
-export type CellProps<T> = {
+export type CellProps<T, K = any> = {
   style: React.CSSProperties;
   data: T;
   index: number;
   store: any;
   uniqueKey?: string;
-  setStore: (store: any) => void;
-  _setStore: (store: any, index: number | string) => void;
+  cellExtraProps?: K;
 };
 
 export type CellDatas<T> = {
@@ -62,6 +60,7 @@ export type RecyclerListProps = {
   onFooterShow?: () => void;
   onFooterHide?: () => void;
   forceRelayoutKey?: string;
+  cellExtraProps?: any;
 };
 
 type Layout = {
@@ -84,8 +83,8 @@ type State = {
   width: number;
   headerStyle: React.CSSProperties;
   footerStyle: React.CSSProperties;
-  forceRelayoutKey: string;
   columnHeights: number[];
+  lastProps: RecyclerListProps | null;
 };
 
 const scrollStyle: React.CSSProperties = {
@@ -107,8 +106,16 @@ const footerStyle: React.CSSProperties = {
 };
 
 class RecyclerList extends React.Component<RecyclerListProps, State> {
+  static getUniqueKey(props: RecyclerListProps | null) {
+    if (!props) return '';
+    const { forceRelayoutKey, columns, leftGap, rightGap, columnGap, width, height } = props;
+    return '' + forceRelayoutKey + columns + leftGap + rightGap + columnGap + width + height;
+  }
+
   static computedRenderCellLayouts(props: RecyclerListProps, state: State) {
-    const shouldRelayout = state.forceRelayoutKey === props.forceRelayoutKey;
+    const shouldRelayout =
+      RecyclerList.getUniqueKey(state.lastProps) === RecyclerList.getUniqueKey(props);
+
     const lastLength = state.cellData.length;
     const columnHeights = state.columnHeights;
     const { columns = 1, leftGap = 0, rightGap = 0, columnGap = 0, width } = props;
@@ -135,15 +142,20 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
       totalHeight += height;
     }
 
-    return { layouts, contentHeight: getMax(columnHeights) };
+    return {
+      layouts,
+      contentHeight: getMax(columnHeights),
+      lastProps: props,
+    };
   }
 
   static getDerivedStateFromProps(props: RecyclerListProps, state: State) {
     const { width } = props;
     const isCellDataEqual =
       props.cellData === state.cellData && props.cellData.length === state.cellData.length;
-    const isWidthEqual = width === state.width;
-    if (isCellDataEqual && isWidthEqual) {
+    const isKeyEqual =
+      RecyclerList.getUniqueKey(state.lastProps) === RecyclerList.getUniqueKey(props);
+    if (isCellDataEqual && isKeyEqual) {
       return null;
     } else {
       const newState = {};
@@ -154,7 +166,7 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
         });
       }
 
-      if (!isWidthEqual) {
+      if (!isKeyEqual) {
         Object.assign(newState, {
           width: width,
           headerStyle: { ...headerStyle, width },
@@ -165,12 +177,6 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
       return newState;
     }
   }
-
-  stores: { [index: string]: any } = {};
-
-  private setStore = (store: any, index: number | string) => {
-    this.stores[index + ''] = store;
-  };
 
   private current: RenderInfo[] = [];
   private topRemoveMap: NAMap = new NAMap();
@@ -190,8 +196,8 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
     width: 0,
     headerStyle: {},
     footerStyle: {},
-    forceRelayoutKey: '',
     columnHeights: Array(this.props.columns).fill(0),
+    lastProps: null,
   };
 
   lastScrollTop: number = NaN;
@@ -590,16 +596,8 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
     this.computeShowEvent(scrollTop);
   }
 
-  componentDidUpdate() {
-    const { forceRelayoutKey } = this.props;
-    if (forceRelayoutKey !== this.forceRelayoutKey) {
-      this.forceRelayoutKey = forceRelayoutKey;
-      this.resetList();
-    }
-  }
-
   render() {
-    const { height, width, style, className, Header, Footer } = this.props;
+    const { height, width, style, className, Header, Footer, cellExtraProps } = this.props;
     const {
       renderCurrent,
       layouts,
@@ -634,17 +632,16 @@ class RecyclerList extends React.Component<RecyclerListProps, State> {
 
             return (
               <CellWrapper
+                key={index}
                 height={height}
                 width={width}
                 top={top + headerHeight}
                 left={left}
                 index={layoutIndex}
                 data={cellData[layoutIndex].data}
-                key={index}
                 Component={TypeComponent}
-                stores={this.stores}
-                setStore={this.setStore}
                 uniqueKey={cellData[layoutIndex].uniqueKey}
+                cellExtraProps={cellExtraProps}
               />
             );
           })}

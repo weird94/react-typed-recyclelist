@@ -1,6 +1,5 @@
 import React, { memo, useState, useEffect, useCallback } from 'react';
 import List, { CellProps, CellDatas } from '../../src/index';
-import useStoreState from '../../src/useStoreState';
 import ReactDOM from 'react-dom';
 
 const cellStyle: React.CSSProperties = {
@@ -10,16 +9,22 @@ const cellStyle: React.CSSProperties = {
   flexDirection: 'column',
 };
 
-const Cell = memo((props: CellProps<{ name: string }>) => {
-  const [active, setActive] = useStoreState(false, 'active', props);
-  const { style, index } = props;
+const Cell = memo((props: CellProps<{ name: string; active?: boolean }>) => {
+  const {
+    style,
+    index,
+    data: { active },
+    cellExtraProps: setActive,
+  } = props;
 
   const bgColor = index % 2 === 0 ? 'white' : 'yellow';
 
   return (
     <div
       style={{ ...cellStyle, ...style, backgroundColor: bgColor }}
-      onClick={() => setActive(!active)}
+      onClick={() => {
+        setActive(index, !active);
+      }}
     >
       <div
         style={{
@@ -33,7 +38,7 @@ const Cell = memo((props: CellProps<{ name: string }>) => {
   );
 });
 
-const cellData: CellDatas<{ name: string }> = Array(1000)
+const cellData: CellDatas<{ name: string; active?: boolean }> = Array(1000)
   .fill(1)
   .map((_, i) => {
     return {
@@ -59,9 +64,32 @@ const useResize = () => {
 };
 
 const Demo = () => {
+  const [data, setData] = useState(cellData);
   const key = useResize();
+
+  const setCellActive = useCallback(
+    (index: number, active: boolean) => {
+      data[index] = {
+        ...data[index],
+        data: {
+          ...data[index].data,
+          active,
+        },
+      };
+      console.log('data', data);
+      setData(data);
+    },
+    [data]
+  );
+
   return (
-    <List key={key} height={window.innerHeight} width={window.innerWidth} cellData={cellData} />
+    <List
+      key={key}
+      height={window.innerHeight}
+      width={window.innerWidth}
+      cellData={data}
+      cellExtraProps={setCellActive}
+    />
   );
 };
 
